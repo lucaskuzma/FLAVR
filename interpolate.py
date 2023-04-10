@@ -230,7 +230,7 @@ if not args.save_files:
     os.remove(output_video)
 
 else:
-    print(f"Writing frames to: {output_video}")
+    print(f"Writing {len(new_video)} frames to {output_video}")
 
     if not os.path.exists(output_video):
         os.makedirs(output_video)
