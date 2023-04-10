@@ -131,12 +131,13 @@ def write_video_cv2(frames, video_name, fps, sizes):
         out.write(frame)
 
 
-def write_video_frames(frames, video_name):
+def write_video_frames(frames, video_path):
     i = 0
     for frame in frames:
         im = Image.fromarray(frame)
         s = str(i).zfill(4) + ".png"
-        im.save(os.path.join(video_name, s))
+        im.save(os.path.join(video_path, s))
+        i += 1
 
 
 def make_image(img):
@@ -230,4 +231,8 @@ if not args.save_files:
 
 else:
     print(f"Writing frames to: {output_video}")
+
+    if not os.path.exists(output_video):
+        os.makedirs(output_video)
+
     write_video_frames(new_video, output_video)
