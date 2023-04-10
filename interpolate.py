@@ -74,7 +74,12 @@ if input_video.endswith("/"):
 else:
     video_name = input_video.split("/")[-1].split(input_ext)[0]
 
-output_video = os.path.join(video_name + f"_{args.factor}x" + str(args.output_ext))
+if not args.save_files:
+    output_video = os.path.join(video_name + f"_{args.factor}x" + str(args.output_ext))
+else:
+    output_video = os.path.join(video_name + f"_{args.factor}x/")
+
+print(f"output video to: {output_video}")
 
 n_outputs = args.factor - 1
 
@@ -124,6 +129,14 @@ def write_video_cv2(frames, video_name, fps, sizes):
 
     for frame in frames:
         out.write(frame)
+
+
+def write_video_frames(frames, video_name):
+    i = 0
+    for frame in frames:
+        im = Image.fromarray(frame)
+        s = str(i).zfill(4) + ".png"
+        im.save(os.path.join(video_name, s))
 
 
 def make_image(img):
@@ -204,11 +217,17 @@ for i in tqdm.tqdm(range(len(idxs))):
 
 new_video = [make_image(im_) for im_ in outputs]
 
-write_video_cv2(new_video, output_video, args.output_fps, (resizes[1], resizes[0]))
+if not args.save_files:
+    write_video_cv2(new_video, output_video, args.output_fps, (resizes[1], resizes[0]))
 
-print("Writing to ", output_video.split(".")[0] + ".mp4")
-os.system(
-    "ffmpeg -hide_banner -loglevel warning -i %s %s"
-    % (output_video, output_video.split(".")[0] + ".mp4")
-)
-os.remove(output_video)
+    # err.. ignore output extension flag and just make an MP4 anyway??
+    print("Writing to ", output_video.split(".")[0] + ".mp4")
+    os.system(
+        "ffmpeg -hide_banner -loglevel warning -i %s %s"
+        % (output_video, output_video.split(".")[0] + ".mp4")
+    )
+    os.remove(output_video)
+
+else:
+    print(f"Writing frames to: {output_video}")
+    write_video_frames(new_video, output_video)
