@@ -134,7 +134,8 @@ def write_video_cv2(frames, video_name, fps, sizes):
 def write_video_frames(frames, video_path):
     i = 0
     for frame in frames:
-        im = Image.fromarray(frame)
+        frameRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        im = Image.fromarray(frameRGB)
         s = str(i).zfill(4) + ".png"
         im.save(os.path.join(video_path, s))
         i += 1
